@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JOBZ.BAR - Traveler's Beer Sanctuary</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #000000;
+            --secondary: #ffffff;
+            --accent: #00ffff;
+            --light: #1a1a1a;
+            --dark: #000000;
+        }
+        
+        body {
+            background-color: var(--primary);
+            color: var(--secondary);
+            line-height: 1.6;
+            transition: background-color 1s ease;
+        }
+        
+        header {
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+            text-shadow: 0 0 10px var(--accent);
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+        
+        .location {
+            display: inline-block;
+            background-color: var(--accent);
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .section {
+            margin-bottom: 3rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            backdrop-filter: blur(5px);
+        }
+        
+        h2 {
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent);
+            text-shadow: 0 0 5px var(--accent);
+        }
+        
+        .beer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .beer-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .beer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+        }
+        
+        .beer-header {
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .beer-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .beer-details {
+            padding: 1rem;
+        }
+        
+        .beer-stock {
+            margin: 1rem 0;
+        }
+        
+        .stock-bar {
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+        
+        .stock-level {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+        
+        .stock-low {
+            background-color: #ff3333;
+        }
+        
+        .stock-count {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .buy-btn {
+            display: block;
+            width: 100%;
+            padding: 0.8rem;
+            background-color: var(--accent);
+            color: var(--primary);
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 1rem;
+        }
+        
+        .buy-btn:hover {
+            background-color: #00cccc;
+        }
+        
+        .buy-btn:disabled {
+            background-color: #333333;
+            color: #666666;
+            cursor: not-allowed;
+        }
+        
+        .seating-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .seating-option {
+            flex: 1;
+            min-width: 250px;
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .seating-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+        
+        .real-time-update {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--accent);
+            color: var(--primary);
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            display: none;
+            animation: fadeInOut 3s ease;
+            z-index: 1000;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(20px); }
+            20% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(20px); }
+        }
+        
+        footer {
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        @media (max-width: 768px) {
+            .beer-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">JOBZ.BAR</div>
+        <div class="tagline">A revolutionary bar for travelers in GOA</div>
+        <div class="location">Walkable distance from the Airport</div>
+    </header>
+    
+    <div class="container">
+        <section class="section">
+            <h2>Our Beer Collection</h2>
+            <p>Step into our cold storage room - a huge closet of beers from around the world. Choose your favorite and connect with fellow travelers.</p>
+            
+            <div class="beer-grid" id="beerGrid">
+                <!-- Beer cards will be generated here by JavaScript -->
+            </div>
+        </section>
+        
+        <section class="section">
+            <h2>Enjoyment Zone</h2>
+            <p>Find a comfortable spot in our lounge area. We offer cozy couches and bean bags perfect for conversations before you explore GOA.</p>
+            
+            <div class="seating-info">
+                <div class="seating-option">
+                    <div class="seating-icon">🛋️</div>
+                    <h3>Comfortable Couches</h3>
+                    <p>Relax on our plush couches while enjoying your beer and conversation.</p>
+                </div>
+                <div class="seating-option">
+                    <div class="seating-icon">🛏️</div>
+                    <h3>Bean Bag Area</h3>
+                    <p>Sink into our comfortable bean bags for a more casual seating experience.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <div class="real-time-update" id="realTimeUpdate">
+        Stock updated in real-time!
+    </div>
+    
+    <footer>
+        <p>JOBZ.BAR &copy; 2023 | A traveler's sanctuary near GOA Airport</p>
+        <p>Open daily from 11:00 AM to 11:00 PM</p>
+    </footer>
+
+    <script>
+        // Beer database with colors based on beer type/company
+        let beerStock = [
+            { id: 1, name: "Kingfisher Premium", type: "Lager", country: "India", price: 120, stock: 50, maxStock: 100, color: "#FFD700" },
+            { id: 2, name: "Bira 91 Blonde", type: "Wheat", country: "India", price: 150, stock: 30, maxStock: 80, color: "#F5A623" },
+            { id: 3, name: "Heineken", type: "Lager", country: "Netherlands", price: 160, stock: 45, maxStock: 90, color: "#008C45" },
+            { id: 4, name: "Corona Extra", type: "Pale Lager", country: "Mexico", price: 180, stock: 25, maxStock: 70, color: "#F6EB61" },
+            { id: 5, name: "Hoegaarden", type: "Witbier", country: "Belgium", price: 200, stock: 35, maxStock: 60, color: "#F8E473" },
+            { id: 6, name: "Budweiser", type: "Lager", country: "USA", price: 140, stock: 60, maxStock: 100, color: "#C8102E" },
+            { id: 7, name: "Tuborg", type: "Pilsner", country: "Denmark", price: 130, stock: 40, maxStock: 80, color: "#004B87" },
+            { id: 8, name: "Simba", type: "Lager", country: "India", price: 110, stock: 70, maxStock: 120, color: "#FF6B00" },
+            { id: 9, name: "Stella Artois", type: "Pilsner", country: "Belgium", price: 170, stock: 40, maxStock: 80, color: "#F6EB61" },
+            { id: 10, name: "Guinness", type: "Stout", country: "Ireland", price: 220, stock: 20, maxStock: 50, color: "#000000" },
+            { id: 11, name: "Carlsberg", type: "Pilsner", country: "Denmark", price: 150, stock: 55, maxStock: 100, color: "#0065BD" },
+            { id: 12, name: "Asahi Super Dry", type: "Lager", country: "Japan", price: 190, stock: 30, maxStock: 70, color: "#FFFFFF" },
+            { id: 13, name: "Sapporo Premium", type: "Lager", country: "Japan", price: 185, stock: 35, maxStock: 75, color: "#FF0000" },
+            { id: 14, name: "Tsingtao", type: "Lager", country: "China", price: 160, stock: 45, maxStock: 90, color: "#0066B3" },
+            { id: 15, name: "Kirin Ichiban", type: "Lager", country: "Japan", price: 195, stock: 25, maxStock: 60, color: "#E60012" },
+            { id: 16, name: "Blue Moon", type: "Witbier", country: "USA", price: 210, stock: 30, maxStock: 70, color: "#F47A20" },
+            { id: 17, name: "Paulaner", type: "Hefeweizen", country: "Germany", price: 230, stock: 20, maxStock: 50, color: "#D52B1E" },
+            { id: 18, name: "Leffe Blonde", type: "Abbey Ale", country: "Belgium", price: 240, stock: 15, maxStock: 40, color: "#F8C300" },
+            { id: 19, name: "Chimay Blue", type: "Trappist", country: "Belgium", price: 280, stock: 10, maxStock: 30, color: "#003366" },
+            { id: 20, name: "Duvel", type: "Strong Golden Ale", country: "Belgium", price: 260, stock: 18, maxStock: 45, color: "#FFCC00" }
+        ];
+
+        // DOM elements
+        const beerGrid = document.getElementById('beerGrid');
+        const realTimeUpdate = document.getElementById('realTimeUpdate');
+        const body = document.body;
+
+        // Current background color (starts with black)
+        let currentBgColor = [0, 0, 0]; // RGB
+
+        // Initialize the beer grid
+        function renderBeerGrid() {
+            beerGrid.innerHTML = '';
+            
+            beerStock.forEach(beer => {
+                // Create beer card
+                const beerCard = document.createElement('div');
+                beerCard.className = 'beer-card';
+                
+                const stockPercentage = (beer.stock / beer.maxStock) * 100;
+                const stockLevelClass = stockPercentage < 20 ? 'stock-level stock-low' : 'stock-level';
+                
+                beerCard.innerHTML = `
+                    <div class="beer-header" style="background-color: ${beer.color}; color: ${getContrastColor(beer.color)}">
+                        <div class="beer-name">${beer.name}</div>
+                        <div>${beer.type} • ${beer.country}</div>
+                    </div>
+                    <div class="beer-details">
+                        <div class="beer-info">
+                            <div><strong>Type:</strong> ${beer.type}</div>
+                            <div><strong>Country:</strong> ${beer.country}</div>
+                            <div><strong>Price:</strong> ₹${beer.price}</div>
+                        </div>
+                        <div class="beer-stock">
+                            <div>Stock:</div>
+                            <div class="stock-bar">
+                                <div class="${stockLevelClass}" style="width: ${stockPercentage}%; background-color: ${beer.color}"></div>
+                            </div>
+                            <div class="stock-count">${beer.stock} / ${beer.maxStock}</div>
+                        </div>
+                        <button class="buy-btn" data-id="${beer.id}" ${beer.stock === 0 ? 'disabled' : ''}>
+                            ${beer.stock === 0 ? 'Out of Stock' : 'Buy Now'}
+                        </button>
+                    </div>
+                `;
+                
+                beerGrid.appendChild(beerCard);
+            });
+            
+            // Add event listeners to buy buttons
+            document.querySelectorAll('.buy-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const beerId = parseInt(this.getAttribute('data-id'));
+                    buyBeer(beerId);
+                });
+            });
+        }
+
+        // Helper function to determine text color based on background
+        function getContrastColor(hexColor) {
+            // Convert hex to RGB
+            const r = parseInt(hexColor.substr(1, 2), 16);
+            const g = parseInt(hexColor.substr(3, 2), 16);
+            const b = parseInt(hexColor.substr(5, 2), 16);
+            
+            // Calculate luminance
+            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            
+            return luminance > 0.5 ? '#000000' : '#FFFFFF';
+        }
+
+        // Buy beer function
+        function buyBeer(beerId) {
+            const beer = beerStock.find(b => b.id === beerId);
+            if (beer && beer.stock >= 1) {
+                beer.stock -= 1;
+                
+                // Update background color based on beer color
+                updateBackgroundColor(beer.color);
+                
+                showRealTimeUpdate(`1 ${beer.name} purchased`);
+                renderBeerGrid();
+            }
+        }
+
+        // Update background color by blending with beer color
+        function updateBackgroundColor(beerColor) {
+            // Convert beer color to RGB
+            const beerRgb = hexToRgb(beerColor);
+            
+            // Blend with current background (80% current, 20% beer color)
+            const blendFactor = 0.2;
+            const newR = Math.round(currentBgColor[0] * (1 - blendFactor) + beerRgb[0] * blendFactor);
+            const newG = Math.round(currentBgColor[1] * (1 - blendFactor) + beerRgb[1] * blendFactor);
+            const newB = Math.round(currentBgColor[2] * (1 - blendFactor) + beerRgb[2] * blendFactor);
+            
+            // Update current background
+            currentBgColor = [newR, newG, newB];
+            
+            // Apply to body
+            body.style.backgroundColor = `rgb(${newR}, ${newG}, ${newB})`;
+        }
+
+        // Convert hex color to RGB array
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? [
+                parseInt(result[1], 16),
+                parseInt(result[2], 16),
+                parseInt(result[3], 16)
+            ] : [0, 0, 0];
+        }
+
+        // Show real-time update notification
+        function showRealTimeUpdate(message) {
+            realTimeUpdate.textContent = message;
+            realTimeUpdate.style.display = 'block';
+            setTimeout(() => {
+                realTimeUpdate.style.display = 'none';
+            }, 3000);
+        }
+
+        // Simulate stock changes (like other customers buying)
+        function simulateStockChanges() {
+            setInterval(() => {
+                // Randomly select a beer
+                const randomIndex = Math.floor(Math.random() * beerStock.length);
+                const beer = beerStock[randomIndex];
+                
+                // Only reduce stock if available
+                if (beer.stock >= 1) {
+                    beer.stock -= 1;
+                    showRealTimeUpdate(`Stock updated: ${beer.name} -1`);
+                    renderBeerGrid();
+                }
+                
+                // Occasionally restock a random beer
+                if (Math.random() < 0.1) { // 10% chance
+                    const restockBeer = beerStock[Math.floor(Math.random() * beerStock.length)];
+                    const restockAmount = Math.floor(Math.random() * 20) + 10;
+                    restockBeer.stock = Math.min(restockBeer.stock + restockAmount, restockBeer.maxStock);
+                    showRealTimeUpdate(`Restocked: ${restockBeer.name} +${restockAmount}`);
+                    renderBeerGrid();
+                }
+            }, 8000); // Every 8 seconds
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderBeerGrid();
+            simulateStockChanges();
+        });
+    </script>
+</body>
+</html>
