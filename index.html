@@ -107,6 +107,7 @@
         .beer-header {
             padding: 1rem;
             text-align: center;
+            font-family: 'Courier New', monospace;
         }
         
         .beer-name {
@@ -116,6 +117,7 @@
         
         .beer-details {
             padding: 1rem;
+            font-family: 'Courier New', monospace;
         }
         
         .beer-stock {
@@ -157,6 +159,7 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
             margin-top: 1rem;
+            font-family: 'Courier New', monospace;
         }
         
         .buy-btn:hover {
@@ -192,6 +195,40 @@
             color: var(--accent);
         }
         
+        .beer-counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: var(--accent);
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            z-index: 1000;
+            border: 2px solid var(--accent);
+            backdrop-filter: blur(5px);
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            min-width: 200px;
+        }
+        
+        .counter-title {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+        }
+        
+        .counter-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .counter-subtitle {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
         .real-time-update {
             position: fixed;
             bottom: 20px;
@@ -204,6 +241,7 @@
             display: none;
             animation: fadeInOut 3s ease;
             z-index: 1000;
+            font-family: 'Courier New', monospace;
         }
         
         @keyframes fadeInOut {
@@ -226,6 +264,12 @@
             .beer-grid {
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             }
+            
+            .beer-counter {
+                top: 10px;
+                right: 10px;
+                min-width: 150px;
+            }
         }
     </style>
 </head>
@@ -235,6 +279,12 @@
         <div class="tagline">A revolutionary bar for travelers in GOA</div>
         <div class="location">Walkable distance from the Airport</div>
     </header>
+    
+    <div class="beer-counter" id="beerCounter">
+        <div class="counter-title">BEERS CONSUMED</div>
+        <div class="counter-value" id="totalBeersConsumed">0</div>
+        <div class="counter-subtitle">Last update: <span id="lastUpdateTime">Just now</span></div>
+    </div>
     
     <div class="container">
         <section class="section">
@@ -302,10 +352,14 @@
         // DOM elements
         const beerGrid = document.getElementById('beerGrid');
         const realTimeUpdate = document.getElementById('realTimeUpdate');
+        const beerCounter = document.getElementById('beerCounter');
+        const totalBeersConsumed = document.getElementById('totalBeersConsumed');
+        const lastUpdateTime = document.getElementById('lastUpdateTime');
         const body = document.body;
 
         // Current background color (starts with black)
         let currentBgColor = [0, 0, 0]; // RGB
+        let beersConsumed = 0;
 
         // Initialize the beer grid
         function renderBeerGrid() {
@@ -373,6 +427,10 @@
             const beer = beerStock.find(b => b.id === beerId);
             if (beer && beer.stock >= 1) {
                 beer.stock -= 1;
+                beersConsumed++;
+                
+                // Update counter
+                updateBeerCounter();
                 
                 // Update background color based on beer color
                 updateBackgroundColor(beer.color);
@@ -380,6 +438,22 @@
                 showRealTimeUpdate(`1 ${beer.name} purchased`);
                 renderBeerGrid();
             }
+        }
+
+        // Update beer counter
+        function updateBeerCounter() {
+            totalBeersConsumed.textContent = beersConsumed;
+            
+            // Update time
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            lastUpdateTime.textContent = timeString;
+            
+            // Add a subtle animation to the counter
+            beerCounter.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                beerCounter.style.transform = 'scale(1)';
+            }, 200);
         }
 
         // Update background color by blending with beer color
@@ -429,6 +503,8 @@
                 // Only reduce stock if available
                 if (beer.stock >= 1) {
                     beer.stock -= 1;
+                    beersConsumed++;
+                    updateBeerCounter();
                     showRealTimeUpdate(`Stock updated: ${beer.name} -1`);
                     renderBeerGrid();
                 }
